@@ -1,66 +1,60 @@
+# import time
 # import requests
 # from bs4 import BeautifulSoup
 #
 #
-# def parsing_product(product_link: str):
-#     product_response = requests.get(product_link).text
-#     product_object = BeautifulSoup(product_response, 'lxml')
-#     block_body = product_object.find("body", style=None)
-#     block_tool = block_body.find("div", id="tool")
-#     block_wrapper = block_tool.find("div", id="calorizator_wrapper")
-#     block_product = block_wrapper.find("div", id="calorizator_products")
-#     block_wrapper2 = block_product.find("div", id="products_wrapper")
-#     block_product2 = block_wrapper2.find_all("div", class_="product")
-#     list_of_href = []
-#
-#     for i in block_product2:
-#         block_links = i.find_all("a")
-#         for j in block_links:
-#             if j.get("href").startswith("#"):
-#                 list_of_href.append(j.get("href"))
-#
-#     list_of_full_links = []
-#     for i_href in list_of_href:
-#         list_of_full_links.append(product_link + i_href)
-#     return list_of_full_links
+# def get_product_links(base_url):
+#     response = requests.get(base_url).text
+#     soup = BeautifulSoup(response, 'lxml')
+#     product_blocks = soup.find("div", id="calorizator_wrapper"
+#                                ).find_all("div", class_="main_block")
+#     return [base_url + link.find("a")["href"] for link in product_blocks]
 #
 #
-# link = "https://supercalorizator.ru/"
-# response = requests.get(link).text
-# #print(response)
+# def get_all_product_links(product_url):
+#     product_links = get_product_links(product_url)
+#     list_product_links = []
 #
-# soup = BeautifulSoup(response, 'lxml')
-# block = soup.find("body", style=None)
-# sub_block = block.find("div", id="tool")
+#     for product_link in product_links:
+#         product_response = requests.get(product_link).text
+#         product_soup = BeautifulSoup(product_response, 'lxml')
+#         product_links_tags = product_soup.find_all(
+#             "a", href=lambda href: href and href.startswith("#m"))
 #
-# #print(sub_block)
-# product_block = sub_block.find("div", id="calorizator_wrapper")
-# # print(product_block)
-# product_block2 = product_block.find("div", id="main_categories")
+#         product_links_urls = {product_link + tag["href"]
+#                               for tag in product_links_tags}
+#         list_product_links.extend(product_links_urls)
 #
-# #print(product_block2)
-# product_block3 = product_block2.findAll("div", attrs={"class": "main_block"})
+#     return list(list_product_links)
 #
-# list_of_links = []
-# for i_block in product_block3:
-#     links = i_block.find_all("a")
-#     for i_link in links:
-#         href = i_link.get("href")
-#         list_of_links.append(link + href)
 #
-# print(list_of_links)
+# def get_product_data(product_link: str):
+#     response = requests.get(product_link).text
+#     soup = BeautifulSoup(response, "lxml")
+#     name_of_product = soup.find("div",
+#                                 class_="pop_product_name").get_text(strip=True)
+#     caloric = soup.find("span", class_="kkal").get_text(strip=True)
+#     return name_of_product, caloric
 #
-# list_of_url = []
-# for i_url in list_of_links:
-#     for j_url in parsing_product(i_url):
-#         list_of_url.append(j_url)
 #
-# # print(list_of_url)
-# print(parsing_product(list_of_links[0]))
+# url = "https://supercalorizator.ru/"
+# all_product_links = get_all_product_links(url)
+# print(all_product_links)
+# product_dict = {}
+# for i_link in all_product_links[:10]:
+#     product = get_product_data(i_link)
+#     product_dict[product[0]] = product[1]
+#     time.sleep(1)
+#
+# print(product_dict)
 import requests
 from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
+from functools import lru_cache
+import time
 
 
+@lru_cache(maxsize=128)
 def get_product_links(base_url):
     response = requests.get(base_url).text
     soup = BeautifulSoup(response, 'lxml')
@@ -70,16 +64,40 @@ def get_product_links(base_url):
 
 def get_all_product_links(product_url):
     product_links = get_product_links(product_url)
-    list_product_links = []
-    for product_link in product_links:
-        product_response = requests.get(product_link).text
-        product_soup = BeautifulSoup(product_response, 'lxml')
-        product_links_tags = product_soup.find_all("a", href=lambda href: href and href.startswith("#"))
-        product_links_urls = [product_link + tag["href"] for tag in product_links_tags]
-        list_product_links.extend(product_links_urls)
-    return all_product_links
+    list_product_links = set()  # Используем множество вместо списка
+
+    with ThreadPoolExecutor() as executor:
+        results = [executor.submit(get_product_link_details, product_link) for product_link in product_links]
+        for future in results:
+            list_product_links.update(future.result())  # Добавляем результаты в множество
+
+    return list(list_product_links)  # Преобразуем множество в список
+
+
+@lru_cache(maxsize=128)
+def get_product_link_details(product_link):
+    product_response = requests.get(product_link).text
+    product_soup = BeautifulSoup(product_response, 'lxml')
+    product_links_tags = product_soup.find_all("a", href=lambda href: href and href.startswith("#"))
+    product_links_urls = [product_link + tag["href"] for tag in product_links_tags]
+    return product_links_urls
+
+
+def get_product_data(product_link: str):
+    response = requests.get(product_link).text
+    soup = BeautifulSoup(response, "lxml")
+    name_of_product = soup.find("div", class_="pop_product_name").get_text(strip=True)
+    caloric = soup.find("span", class_="kkal").get_text(strip=True)
+    return name_of_product, caloric
 
 
 url = "https://supercalorizator.ru/"
 all_product_links = get_all_product_links(url)
-print(all_product_links)
+product_dict = {}
+for i_link in all_product_links[:6]:
+    product = get_product_data(i_link)
+    print(i_link)
+    product_dict[product[0]] = product[1]
+    time.sleep(1)
+
+print(product_dict)
