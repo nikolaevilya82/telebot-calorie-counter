@@ -1,0 +1,4 @@
+from telebot.hendler_backend import State, SatesGroup
+
+
+class UserInfo()

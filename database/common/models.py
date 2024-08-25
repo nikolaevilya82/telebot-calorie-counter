@@ -12,7 +12,7 @@ class ModelBase(pw.Model):
         database = db
 
 
-class History(ModelBase):
+class User(ModelBase):
     number = pw.TextField
     message = pw.TextField
 
