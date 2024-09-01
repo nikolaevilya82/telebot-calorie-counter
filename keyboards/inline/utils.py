@@ -4,8 +4,9 @@ from telebot import TeleBot
 
 def is_gender():
     # Создаём объекты кнопок.
-    button_1 = InlineKeyboardButton(text="Ваш пол?", callback_data="dog")
-    button_2 = InlineKeyboardButton(text="Ваш вес (в кг)?", callback_data="cat")
-    button_2 = InlineKeyboardButton(text="Ваш рост (в см)?", callback_data="cat")
-    button_2 = InlineKeyboardButton(text="Ваш возраст?", callback_data="cat")
+    button_1 = InlineKeyboardButton(text="Мужской", callback_data="man")
+    button_2 = InlineKeyboardButton(text="Женский", callback_data="woman")
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(button_1, button_2)
+    return keyboard
 
