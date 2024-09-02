@@ -23,6 +23,7 @@ def send_welcome(message):
 @bot.message_handler(func=lambda message: message.text == "Пройти опрос.")
 def get_survey(message):
     survey.take_survey(message.chat.id)
+    survey.add_gender(message)
     bot.send_message(
         message.from_user.id,
          f"Ваша суточная норма калорий {"""calories"""}",
