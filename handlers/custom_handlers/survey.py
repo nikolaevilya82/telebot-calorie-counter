@@ -18,7 +18,7 @@ def take_survey(chat_id):
 @bot.callback_query_handler(func=lambda callback_query: callback_query.data in ["man", "woman"])
 def add_gender(callback_query):
     # Сохраняем пол в глобальной переменной
-    survey_parameters["gender"] = callback_query.text
+    survey_parameters["gender"] = callback_query.data
     print(survey_parameters)
 
 

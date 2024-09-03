@@ -23,11 +23,16 @@ def send_welcome(message):
 @bot.message_handler(func=lambda message: message.text == "Пройти опрос.")
 def get_survey(message):
     survey.take_survey(message.chat.id)
-    survey.add_gender(message)
+
+
+@bot.callback_query_handler(func=lambda call: call.data in ["man", "woman"])
+def handle_gender_selection(callback_query):
+    survey.add_gender(callback_query)
     bot.send_message(
-        message.from_user.id,
-         f"Ваша суточная норма калорий {"""calories"""}",
-        reply_markup=ReplyKeyboardRemove())
+        callback_query.from_user.id,
+        f"Ваша суточная норма калорий {"""calories"""}",
+        reply_markup=ReplyKeyboardRemove()
+    )
 
 
 if __name__ == '__main__':
