@@ -37,3 +37,6 @@ def get_all_product_data(base_url: str) -> Dict[str, str]:
         total_products.update(get_product(i_link))
         time.sleep(1)
     return total_products
+
+
+get_all_product_data("https://supercalorizator.ru")
