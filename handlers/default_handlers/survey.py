@@ -45,12 +45,15 @@ def get_surv(bot):
                          and 'gender' in survey_parameters and 'weight' in survey_parameters
                          and 'height' not in survey_parameters)
     def add_height(message):
-        """Добавляет рост пользователя в глобальную переменную survey_parametres
-                 и запрашивает вес пользователя"""
+        """Добавляет рост пользователя в глобальную переменную survey_parametres,
+           запрашивает вес пользователя и выводит в чат суточную норму калорий пользователя."""
         survey_parameters['height'] = message.text
+        survey_parameters['user_id'] = message.chat.id
+        survey_parameters['user_name'] = message.chat.first_name
         print(survey_parameters)
         bot.send_message(message.chat.id, text=f"Ваша суточная норма калорий: {survey_result()}.")
     return survey_parameters
+
 
 def survey_result() -> str:
     if survey_parameters['gender'] == 'man':
@@ -61,3 +64,6 @@ def survey_result() -> str:
         return formulas.calorie_calculation_women(weight=survey_parameters['weight'],
                                                 height=survey_parameters['height'],
                                                 age=survey_parameters['age'])
+
+
+survey_parameters['daily_norm'] = survey_result()

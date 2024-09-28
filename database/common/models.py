@@ -2,7 +2,7 @@ from datetime import datetime
 import peewee as pw
 
 
-db = pw.SqliteDatabase('users_tgb')
+db = pw.SqliteDatabase('users_tgb.db')
 
 
 class ModelBase(pw.Model):
@@ -13,6 +13,14 @@ class ModelBase(pw.Model):
 
 
 class User(ModelBase):
-    number = pw.TextField
-    message = pw.TextField
+    tg_id = pw.IntegerField
+    user_name = pw.TextField
+    user_gender = pw.TextField
+    user_age = pw.IntegerField
+    user_weight = pw.IntegerField
+    user_height = pw.IntegerField
+    daily_norm = pw.IntegerField
 
+
+if __name__ == '__main__':
+    db.create_tables([User])

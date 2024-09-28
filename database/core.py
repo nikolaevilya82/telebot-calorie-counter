@@ -1,14 +1,14 @@
+from database.common import models
 from database.utils.CRUD import CRUDInterface
-from database.common.models import db, History
+from handlers.default_handlers.survey import survey_parameters
 
 
-db.connect()
-db.create_tables([History])
+models.db.create_tables([models.User])
 
-crud = CRUDInterface()
-
-if __name__ == "__main__":
-    crud()
+user = models.User(survey_parameters['user_id'], survey_parameters['name'], survey_parameters['gender'],
+                   survey_parameters['age'], survey_parameters['weight'], survey_parameters['height'],
+                   survey_parameters['daily_norm'])
+user.save()
 
 
 
