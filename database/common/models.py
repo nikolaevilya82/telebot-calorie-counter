@@ -23,5 +23,3 @@ class User(BaseModel):
     daily_norm = pw.IntegerField()
 
 
-db.create_tables([User])
-User(tg_id=1, user_name='name', user_gender='gender', user_age=10, user_weight=20, user_height=30, daily_norm=50).save()

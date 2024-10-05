@@ -5,7 +5,7 @@ from calculation import formulas
 survey_parameters = {}
 
 
-def get_surv(bot):
+def get_surv(bot) -> dict:
     global survey_parameters
     survey_parameters = {}
 
@@ -56,6 +56,7 @@ def get_surv(bot):
 
 
 def survey_result() -> str:
+    """Рассчитывает ежедневную норму калорий пользователя."""
     if survey_parameters['gender'] == 'man':
         return formulas.calorie_calculation_men(weight=survey_parameters['weight'],
                                                 height=survey_parameters['height'],
