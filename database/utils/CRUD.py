@@ -1,5 +1,5 @@
 from typing import Dict, List, TypeVar
-from database.common.models import ModelBase
+from database.common.models import BaseModel
 from peewee import ModelSelect
 from database.common.models import db
 
@@ -12,10 +12,15 @@ def _store_date(db: db, model: T, *data: List[Dict]) -> None:
         model.isert_many(*data).execute()
 
 
-def _retrieve_all_data(db: db, model: T, *columns: ModelBase) -> ModelSelect:
+def _retrieve_all_data(db: db, model: T, *columns: BaseModel) -> ModelSelect:
     with db.atomic():
         response = model.select(*columns)
     return response
+
+
+def _delite_user(db: db, model: T, user_id) -> None:
+    with db:
+        model.delite().where(model.id == user_id)
 
 
 class CRUDInterface:
@@ -26,6 +31,10 @@ class CRUDInterface:
     @staticmethod
     def retrieve():
         return _retrieve_all_data
+
+    @staticmethod
+    def deite_user():
+        return _delite_user
 
 
 if __name__ == ":__main__":
