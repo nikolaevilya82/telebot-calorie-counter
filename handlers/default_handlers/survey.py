@@ -1,11 +1,13 @@
 from keyboards.inline import inline_bottons
 from calculation import formulas
+from database.core import add_user
+from database.common.models import User
 
 
 survey_parameters = {}
 
 
-def get_surv(bot) -> dict:
+def get_surv(bot) -> None:
     global survey_parameters
     survey_parameters = {}
 
@@ -50,9 +52,10 @@ def get_surv(bot) -> dict:
         survey_parameters['height'] = message.text
         survey_parameters['user_id'] = message.chat.id
         survey_parameters['user_name'] = message.chat.first_name
+        survey_parameters['daily_norm'] = survey_result()
         print(survey_parameters)
         bot.send_message(message.chat.id, text=f"Ваша суточная норма калорий: {survey_result()}.")
-    return survey_parameters
+        add_user(User, survey_parameters)
 
 
 def survey_result() -> str:
@@ -67,4 +70,4 @@ def survey_result() -> str:
                                                 age=survey_parameters['age'])
 
 
-survey_parameters['daily_norm'] = survey_result()
+#survey_parameters['daily_norm'] = survey_result()

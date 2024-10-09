@@ -1,14 +1,18 @@
-from database.common.models import User, db
-from handlers.default_handlers.survey import survey_parameters
+from typing import Dict, List, TypeVar
+from database.common.models import BaseModel
 
 
-db.create_tables([User])
-user = User(survey_parameters['user_id'], survey_parameters['name'], survey_parameters['gender'],
-            survey_parameters['age'], survey_parameters['weight'], survey_parameters['height'],
-            survey_parameters['daily_norm'])
+T = TypeVar('T')
+# db.create_tables([User])
 
-db.create_tables([User])
-User(tg_id=1, user_name='name', user_gender='gender', user_age=10, user_weight=20, user_height=30, daily_norm=50).save()
+
+def add_user(user, survey_param: Dict[str, str]):
+    user(tg_id=int(survey_param['user_id']), user_name=survey_param['user_name'], user_gender=survey_param['gender'],
+         user_age=int(survey_param['age']), user_weight=int(survey_param['weight']), user_height=int(survey_param['height']),
+         daily_norm=int(survey_param['daily_norm'])).save()
+
+# db.create_tables([User])
+# User(tg_id=1, user_name='name', user_gender='gender', user_age=10, user_weight=20, user_height=30, daily_norm=50).save()
 
 
 

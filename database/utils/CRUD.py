@@ -7,7 +7,7 @@ from database.common.models import db
 T = TypeVar('T')
 
 
-def _store_date(db: db, model: T, *data: List[Dict]) -> None:
+def _store_date(db: db, model: T, *data) -> None:
     with db.atomic():
         model.isert_many(*data).execute()
 
