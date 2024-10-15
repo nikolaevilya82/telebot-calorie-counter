@@ -1,5 +1,5 @@
 from keyboards.reply import reply_bottons
-from handlers.default_handlers import survey
+from handlers.custom_handlers import survey
 
 
 def new_user_start(bot):
