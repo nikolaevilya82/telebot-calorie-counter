@@ -12,6 +12,11 @@ def create_table(date_base: db, model: T) -> None:
         date_base.create_tables([model])
 
 
+def store_data(data_base: db, model: T, column, data) -> None:
+    with data_base:
+        model.column = data
+
+
 def store_user(data_base: db, model: T, *data) -> None:
     with data_base.atomic():
         model.insert_many(*data).execute()

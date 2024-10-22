@@ -39,4 +39,5 @@ def get_all_product_data(base_url: str) -> Dict[str, str]:
     return total_products
 
 
-get_all_product_data("https://supercalorizator.ru")
+if __name__ == '__main__':
+    get_all_product_data("https://supercalorizator.ru")

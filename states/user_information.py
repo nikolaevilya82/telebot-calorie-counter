@@ -7,4 +7,5 @@ class UserInfoState(StatesGroup):
     age = State()
     weight = State()
     height = State()
+    ready = State()
 

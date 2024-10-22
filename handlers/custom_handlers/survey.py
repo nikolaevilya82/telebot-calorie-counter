@@ -19,7 +19,7 @@ def get_surv(bot) -> None:
 
     @bot.callback_query_handler(func=lambda callback_query: callback_query.data in ["man", "woman"])
     def add_gender(callback_query):
-        """Добавляет пол пользователя в глобальную переменную survey_parametres
+        """Добавляет пол пользователя в глобальную переменную survey_parameters
          и запрашивает возраст пользователя"""
         survey_parameters["user_gender"] = callback_query.data
         bot.set_state(callback_query.from_user.id, UserInfoState.gender)
@@ -28,7 +28,7 @@ def get_surv(bot) -> None:
 
     @bot.message_handler(state=UserInfoState.gender)
     def add_age(message):
-        """Добавляет возраст пользователя в глобальную переменную survey_parametres
+        """Добавляет возраст пользователя в глобальную переменную survey_parameters
          и запрашивает вес пользователя"""
         survey_parameters['user_age'] = message.text
         bot.set_state(message.from_user.id, UserInfoState.age)
@@ -37,7 +37,7 @@ def get_surv(bot) -> None:
 
     @bot.message_handler(state=UserInfoState.age)
     def add_weight(message):
-        """Добавляет возраст пользователя в глобальную переменную survey_parametres
+        """Добавляет возраст пользователя в глобальную переменную survey_parameters
                  и запрашивает вес пользователя"""
         survey_parameters['user_weight'] = message.text
         bot.set_state(message.from_user.id, UserInfoState.weight)
@@ -46,15 +46,21 @@ def get_surv(bot) -> None:
 
     @bot.message_handler(state=UserInfoState.weight)
     def add_height(message):
-        """Добавляет рост пользователя в глобальную переменную survey_parametres,
-           запрашивает вес пользователя и выводит в чат суточную норму калорий пользователя."""
+        """Добавляет рост пользователя в глобальную переменную survey_parameters,
+           запрашивает вес пользователя."""
         survey_parameters['user_height'] = message.text
         bot.set_state(message.from_user.id, UserInfoState.height)
+
+    @bot.message_handler(state=UserInfoState.height)
+    def add_user_parameters(message):
+        """Добавляет id, имя и суточную норму калорий пользователя в глобальную переменную
+        survey_parameters и выводит в чат суточную норму калорий пользователя."""
         survey_parameters['tg_id'] = message.chat.id
         survey_parameters['user_name'] = message.chat.first_name
         survey_parameters['daily_norm'] = survey_result()
         print(survey_parameters)
         bot.send_message(message.chat.id, text=f"Ваша суточная норма калорий: {survey_result()}.")
+        bot.set_state(message.from_user.id, UserInfoState.ready)
         store_user(db, User, survey_parameters)
 
 
