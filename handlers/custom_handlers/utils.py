@@ -16,7 +16,7 @@ def add_user_calories(bot):
                          func=lambda callback_query: callback_query.data == "product")
     def get_product(callback_query):
         """"""
-        # TODO Удалить клавиатуру.
+
         bot.send_message(chat_id=callback_query.message.chat.id,
                          text="Введите продукт или блюдо, которое Вы сегодня сьели.")
         bot.set_state(callback_query.from_user.id, UserInfoState.product)
