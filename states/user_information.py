@@ -8,4 +8,5 @@ class UserInfoState(StatesGroup):
     weight = State()
     height = State()
     ready = State()
-
+    product = State
+    product_weight = State
