@@ -9,7 +9,7 @@ def new_user_start(bot):
                     f"Здравствуйте {message.chat.first_name}! "
                          f"Это бот, который считает калории съеденных Вами продуктов за день. "
                          f"Для того, что бы рассчитать Вашу суточную норму калорий пройдите опрос",
-                         reply_markup=reply_bottons.gen_markup())
+                         reply_markup=reply_bottons.gen_survey())
 
         if message:
             survey.get_surv(bot)

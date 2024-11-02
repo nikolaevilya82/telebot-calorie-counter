@@ -16,7 +16,7 @@ class User(BaseModel):
         db_table = 'Users'
 
     id: Optional[int]
-    tg_id = pw.IntegerField()
+    tg_id = pw.IntegerField(primary_key=True)
     user_name = pw.CharField(max_length=150)
     user_gender = pw.CharField(max_length=150)
     user_age = pw.IntegerField()

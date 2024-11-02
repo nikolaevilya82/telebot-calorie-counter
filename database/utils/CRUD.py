@@ -2,7 +2,6 @@ from typing import Dict, List, TypeVar
 from database.common.models import db, BaseModel
 from peewee import ModelSelect
 
-
 T = TypeVar('T')
 
 
@@ -16,9 +15,12 @@ def store_data(data_base: db, model: T, column, data) -> None:
         model.column = data
 
 
-def store_user(data_base: db, model: T, *data) -> None:
-    with data_base.atomic():
-        model.insert_many(*data).execute()
+def store_user(data_base: db, model: T, tg_id, data) -> None:
+    if model.get_or_none(model.tg_id == tg_id):
+        model.update(data).where(model.tg_id == tg_id).execute()
+    else:
+        with data_base.atomic():
+            model.insert_many(data).execute()
 
 
 def _retrieve_all_data(db: db, model: T, *columns: BaseModel) -> ModelSelect:

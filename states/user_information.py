@@ -6,7 +6,7 @@ class UserInfoState(StatesGroup):
     gender = State()
     age = State()
     weight = State()
-    height = State()
+    user_height = State()
     ready = State()
-    product = State
-    product_weight = State
+    product = State()
+    product_weight = State()

@@ -1,8 +1,11 @@
-from keyboards.inline import inline_bottons
+from keyboards.reply import reply_bottons
+from keyboards.inline import inline_buttons
 from calculation import formulas
 from database.utils.CRUD import store_user
 from database.common.models import User, db
 from states.user_information import UserInfoState
+from handlers.custom_handlers.utils import add_user_calories
+
 
 survey_parameters = {}
 
@@ -15,7 +18,7 @@ def get_surv(bot) -> None:
     def is_gender(message):
         """Начало опроса пользователя."""
         bot.reply_to(message, "Выберите Ваш пол.",
-                     reply_markup=inline_bottons.is_gender())
+                     reply_markup=inline_buttons.is_gender())
 
     @bot.callback_query_handler(func=lambda callback_query: callback_query.data in ["man", "woman"])
     def add_gender(callback_query):
@@ -46,22 +49,21 @@ def get_surv(bot) -> None:
 
     @bot.message_handler(state=UserInfoState.weight)
     def add_height(message):
-        """Добавляет рост пользователя в глобальную переменную survey_parameters,
-           запрашивает вес пользователя."""
+        """Добавляет рост, id, имя и суточную норму калорий пользователя
+           в глобальную переменную survey_parameters,"""
         survey_parameters['user_height'] = message.text
-        bot.set_state(message.from_user.id, UserInfoState.height)
-
-    @bot.message_handler(state=UserInfoState.height)
-    def add_user_parameters(message):
-        """Добавляет id, имя и суточную норму калорий пользователя в глобальную переменную
-        survey_parameters и выводит в чат суточную норму калорий пользователя."""
         survey_parameters['tg_id'] = message.chat.id
         survey_parameters['user_name'] = message.chat.first_name
         survey_parameters['daily_norm'] = survey_result()
         print(survey_parameters)
-        bot.send_message(message.chat.id, text=f"Ваша суточная норма калорий: {survey_result()}.")
+
+        store_user(db, User, message.chat.id, survey_parameters)
         bot.set_state(message.from_user.id, UserInfoState.ready)
-        store_user(db, User, survey_parameters)
+        bot.send_message(message.chat.id, text=f"Ваша суточная норма калорий: {survey_result()}.")
+        bot.send_message(message.from_user.id,
+                         text="Что бы начать считать калории, нажмите <Добавить калории> внизу.",
+                         reply_markup=reply_bottons.ate_now())
+        add_user_calories(bot)
 
 
 def survey_result() -> str:
