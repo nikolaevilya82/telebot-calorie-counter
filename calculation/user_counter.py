@@ -1,35 +1,41 @@
 import re
 from database.common.models import db, BaseModel
 from database.utils.CRUD import store_data
+from calculation.formulas import calorie_calculation_product
 
 
-def create_pattern(word) -> str:
-    patterns = []
-    for i in range(len(word)):
-        patterns.append(word[:i] + '.' + word[i + 1:])
-
-    for i in range(len(word)):
-        patterns.append(word[:i] + word[i + 1:])
-    final_pattern = '|'.join(patterns)
-    print(final_pattern)
-    return final_pattern
+def create_pattern(word: str) -> str:
+    """создаем шаблоны, заменяя каждую букву на точку и удаляя каждую букву."""
+    patterns = ([word[:i] + '.' + word[i + 1:] for i in range(len(word))] +
+                [word[:i] + word[i + 1:] for i in range(len(word))])
+    print(patterns)
+    return '|'.join(patterns)
 
 
-def product_search(product_name: str, product_dict) -> str:
+def product_search(product_name: str, product_weight: float, product_dict: dict) -> str:
+    """Поиск среди всех ключей с использованием фильтрации по регулярному выражению
+    и вычисление количества калорий, соответствующих весу продукта."""
+    calorie_in_100 = product_dict.get(product_name)
 
-    if product_name not in product_dict.keys:
+    if calorie_in_100 is None:
         pattern = create_pattern(product_name)
-        for i_name in product_dict.keys:
-            if i_name == re.match(pattern, i_name):
-                product_name = i_name
-                return product_name
 
+        for i_name in product_dict.keys():
+            if re.fullmatch(pattern, i_name):
+                calorie_in_100 = product_dict[i_name]
+                break
+
+    if calorie_in_100:
+        return calorie_calculation_product(product_weight, calorie_in_100)
     else:
-        return product_dict[product_name]
+        return 'Такой продукт не найден.'
 
 
 def add_calorie(data_base: db, user, calorie):
+
     store_data(data_base, user, calorie)
 
 
+if __name__ == "__main__":
+    create_pattern("udhgfu")
 

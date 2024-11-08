@@ -10,10 +10,3 @@ def is_gender():
     keyboard.add(button_1, button_2)
     return keyboard
 
-
-def ate_now():
-    """Кнопка для подсчета и добавления калорий в calorie_now, базы User. """
-    button = InlineKeyboardButton(text="Добавить продукт", callback_data="product")
-    keyboard = InlineKeyboardMarkup()
-    keyboard.add(button)
-    return keyboard
