@@ -31,9 +31,13 @@ def product_search(product_name: str, product_weight: float, product_dict: dict)
         return 'Такой продукт не найден.'
 
 
-def add_calorie(data_base: db, user, calorie):
-
-    store_data(data_base, user, calorie)
+def add_calorie(data_base: db, user, calorie, user_tg_id):
+    """Добавляет калории к уже съеденному сегодня и проверяет не превышена ли суточная норма."""
+    user_daily_norm = user.select(user.daily_norm).where(user.tg_id == user_tg_id)
+    user_calorie_now = user.select(user.calories_now).where(user.tg_id == user_tg_id)
+    data_base.update(user.calories_now + calorie)
+    if user_calorie_now + int(calorie) > user_daily_norm:
+        return "Суточная норма превышена"
 
 
 if __name__ == "__main__":
