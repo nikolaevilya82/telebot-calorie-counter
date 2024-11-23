@@ -6,8 +6,6 @@ import telebot
 from telebot.custom_filters import StateFilter
 from handlers.default_handlers import start
 from database.common import models
-from api.parser import get_all_product_data
-from states.user_information import UserInfoState
 
 
 def create_first_table(date_base, user):
@@ -15,7 +13,6 @@ def create_first_table(date_base, user):
         date_base.create_tables([user])
 
 
-get_all_product_data("https://supercalorizator.ru")
 create_first_table(models.db, models.User)
 
 load_dotenv()

@@ -23,6 +23,8 @@ def store_user(data_base: db, model: T, tg_id, data) -> None:
             model.insert_many(data).execute()
 
 
+# def update_data(data_base: db, model: T, data):
+
 def _retrieve_all_data(db: db, model: T, *columns: BaseModel) -> ModelSelect:
     with db.atomic():
         response = model.select(*columns)

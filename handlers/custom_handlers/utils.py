@@ -4,6 +4,8 @@ from database.common.models import User, db
 from states.user_information import UserInfoState
 from states.user_information import UserInfoState
 from keyboards.inline import inline_buttons
+from calculation.user_counter import product_search, add_calorie
+from utils.global_product import global_products
 
 
 def add_user_calories(bot):
@@ -27,9 +29,16 @@ def add_user_calories(bot):
 
     @bot.message_handler(state=UserInfoState.product_weight)
     def add_calories(message):
-        product_parameters["product_name"] = message.text
+        product_parameters["product_weight"] = message.text
         print(product_parameters)
-        store_data(db, User, User.calories_now, calorie_count)
+        eaten_food = product_search(product_parameters['product_now'],
+                                    product_parameters["product_weight"],
+                                    global_products)
+        calories_gained = add_calorie(data_base=db, user=User, calorie=eaten_food,
+                                      user_tg_id=message.from_user.id)
+        if calories_gained == 'Суточная норма превышена':
+            bot.send_message(chat_id=message.chat.id,
+                             text="Суточная норма калорий превышена")
 
 
 

@@ -1,8 +1,8 @@
+import time
+from functools import lru_cache
+from typing import Dict, List, Generator
 import requests
 from bs4 import BeautifulSoup
-from functools import lru_cache
-import time
-from typing import Dict, List, Generator
 
 
 @lru_cache(maxsize=128)
@@ -33,7 +33,7 @@ def get_product(product_link: str) -> Dict[str, str]:
 def get_all_product_data(base_url: str) -> Dict[str, str]:
     list_of_links: List[str] = list(get_product_links(base_url))
     total_products: Dict[str, str] = {}
-    for i_link in list_of_links:
+    for i_link in list_of_links[:2]:
         total_products.update(get_product(i_link))
         time.sleep(1)
     return total_products

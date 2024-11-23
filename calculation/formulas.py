@@ -7,4 +7,4 @@ def calorie_calculation_women(weight, height, age):
 
 
 def calorie_calculation_product(weight, calorie_in_100):
-    return weight * calorie_in_100 / 100
+    return int(weight) * int(calorie_in_100) / 100

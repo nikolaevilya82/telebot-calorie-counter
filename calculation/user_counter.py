@@ -26,20 +26,36 @@ def product_search(product_name: str, product_weight: float, product_dict: dict)
                 break
 
     if calorie_in_100:
+        print('calorie_in_100', calorie_in_100)
         return calorie_calculation_product(product_weight, calorie_in_100)
     else:
         return 'Такой продукт не найден.'
 
 
+# def add_calorie(data_base: db, user, calorie, user_tg_id):
+#     """Добавляет калории к уже съеденному сегодня и проверяет не превышена ли суточная норма."""
+#     user_daily_norm = user.select(user.daily_norm).where(user.tg_id == user_tg_id)
+#     user_calorie_now = user.select(user.calories_now).where(user.tg_id == user_tg_id)
+#     new_calorie = user.calories_now + int(calorie)
+#     user.update(calories_now=new_calorie).where(user.tg_id == user_tg_id).execute()
+#     if new_calorie > user_daily_norm:
+#         return "Суточная норма превышена"
 def add_calorie(data_base: db, user, calorie, user_tg_id):
     """Добавляет калории к уже съеденному сегодня и проверяет не превышена ли суточная норма."""
-    user_daily_norm = user.select(user.daily_norm).where(user.tg_id == user_tg_id)
-    user_calorie_now = user.select(user.calories_now).where(user.tg_id == user_tg_id)
-    data_base.update(user.calories_now + calorie)
-    if user_calorie_now + int(calorie) > user_daily_norm:
+
+    user_entry = user.get(user.tg_id == user_tg_id)
+    user_daily_norm = user_entry.daily_norm
+    user_calorie_now = user_entry.calories_now
+    new_calorie = user_calorie_now + int(calorie)
+    user.update(calories_now=new_calorie).where(user.tg_id == user_tg_id).execute()
+
+    if new_calorie > user_daily_norm:
         return "Суточная норма превышена"
 
 
 if __name__ == "__main__":
     create_pattern("udhgfu")
+    products = {'abc': '234', 'dfg': '567'}
+    eat = product_search('abp', 300, products)
+    print(eat)
 
