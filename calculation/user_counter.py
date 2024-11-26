@@ -1,7 +1,11 @@
 import re
+import logging
 from database.common.models import db, BaseModel
 from database.utils.CRUD import store_data
 from calculation.formulas import calorie_calculation_product
+
+
+logger = logging.getLogger(__name__)
 
 
 def create_pattern(word: str) -> str:
@@ -29,6 +33,8 @@ def product_search(product_name: str, product_weight: float, product_dict: dict)
         print('calorie_in_100', calorie_in_100)
         return calorie_calculation_product(product_weight, calorie_in_100)
     else:
+        logger.info('Продукта, который ввёл пользователь, '
+                    'не оказалось в словаре парсинга продуктов.')
         return 'Такой продукт не найден.'
 
 

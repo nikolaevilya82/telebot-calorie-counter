@@ -1,3 +1,4 @@
+import logging
 from keyboards.reply import reply_bottons
 from keyboards.inline import inline_buttons
 from calculation import formulas
@@ -5,8 +6,10 @@ from database.utils.CRUD import store_user
 from database.common.models import User, db
 from states.user_information import UserInfoState
 from handlers.custom_handlers.utils import add_user_calories
+from api.parser import total_products
 
 
+logger = logging.getLogger(__name__)
 survey_parameters = {}
 
 
@@ -26,7 +29,8 @@ def get_surv(bot) -> None:
          и запрашивает возраст пользователя"""
         survey_parameters["user_gender"] = callback_query.data
         bot.set_state(callback_query.from_user.id, UserInfoState.gender)
-        print(survey_parameters)
+        logger.info(f'Пользователь {callback_query.from_user.first_name} выбрал пол')
+        # print(survey_parameters)
         bot.send_message(chat_id=callback_query.message.chat.id, text="Введите Ваш возраст.")
 
     @bot.message_handler(state=UserInfoState.gender)
@@ -35,7 +39,8 @@ def get_surv(bot) -> None:
          и запрашивает вес пользователя"""
         survey_parameters['user_age'] = message.text
         bot.set_state(message.from_user.id, UserInfoState.age)
-        print(survey_parameters)
+        # print(survey_parameters)
+        logger.info(f'Пользователь {message.chat.first_name} ввёл возраст')
         bot.send_message(message.chat.id, text="Введите Ваш вес в килограммах.")
 
     @bot.message_handler(state=UserInfoState.age)
@@ -44,7 +49,8 @@ def get_surv(bot) -> None:
                  и запрашивает вес пользователя"""
         survey_parameters['user_weight'] = message.text
         bot.set_state(message.from_user.id, UserInfoState.weight)
-        print(survey_parameters)
+        # print(survey_parameters)
+        logger.info(f'Пользователь {message.chat.first_name} ввёл вес')
         bot.send_message(message.chat.id, text="Введите Ваш рост в сантиметрах.")
 
     @bot.message_handler(state=UserInfoState.weight)
@@ -60,10 +66,12 @@ def get_surv(bot) -> None:
         store_user(db, User, message.chat.id, survey_parameters)
         bot.set_state(message.from_user.id, UserInfoState.ready)
         bot.send_message(message.chat.id, text=f"Ваша суточная норма калорий: {survey_result()}.")
+        logger.info(logger.info(f'Пользователь {message.chat.first_name} ввёл вес, '
+                                f'Данные пользователя {message.chat.first_name}, занесены в базу'))
         bot.send_message(message.from_user.id,
                          text="Что бы начать считать калории, нажмите <Добавить калории> внизу.",
                          reply_markup=reply_bottons.ate_now())
-        add_user_calories(bot)
+        add_user_calories(bot, total_products)
 
 
 def survey_result() -> str:

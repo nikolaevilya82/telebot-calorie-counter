@@ -5,17 +5,15 @@ from states.user_information import UserInfoState
 from states.user_information import UserInfoState
 from keyboards.inline import inline_buttons
 from calculation.user_counter import product_search, add_calorie
-from utils.global_product import global_products
 
 
-def add_user_calories(bot):
+
+def add_user_calories(bot, products):
 
     product_parameters = {}
 
     @bot.message_handler(func=lambda message: message.text == "Добавить продукт.")
     def get_product(message):
-        """"""
-        # TODO Удалить клавиатуру.
         bot.send_message(chat_id=message.chat.id,
                          text="Введите продукт или блюдо, которое Вы сегодня сьели.")
         bot.set_state(message.from_user.id, UserInfoState.product)
@@ -33,12 +31,13 @@ def add_user_calories(bot):
         print(product_parameters)
         eaten_food = product_search(product_parameters['product_now'],
                                     product_parameters["product_weight"],
-                                    global_products)
+                                    products)
         calories_gained = add_calorie(data_base=db, user=User, calorie=eaten_food,
                                       user_tg_id=message.from_user.id)
         if calories_gained == 'Суточная норма превышена':
             bot.send_message(chat_id=message.chat.id,
                              text="Суточная норма калорий превышена")
+
 
 
 

@@ -3,6 +3,12 @@ from functools import lru_cache
 from typing import Dict, List, Generator
 import requests
 from bs4 import BeautifulSoup
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+total_products = {}
 
 
 @lru_cache(maxsize=128)
@@ -32,12 +38,18 @@ def get_product(product_link: str) -> Dict[str, str]:
 
 def get_all_product_data(base_url: str) -> Dict[str, str]:
     list_of_links: List[str] = list(get_product_links(base_url))
-    total_products: Dict[str, str] = {}
+    global total_products
+    total_products = {}
     for i_link in list_of_links[:2]:
         total_products.update(get_product(i_link))
         time.sleep(1)
+    if len(total_products) > 0:
+        logger.info("Парсинг продуктов завершён.")
+    else:
+        logger.warning("Не удалось получить продукты.")
     return total_products
 
 
-if __name__ == '__main__':
-    get_all_product_data("https://supercalorizator.ru")
+# if __name__ == '__main__':
+#     get_all_product_data("https://supercalorizator.ru")
+#     get_product("https://supercalorizator.ru")
