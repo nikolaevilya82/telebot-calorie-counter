@@ -69,8 +69,9 @@ def get_surv(bot) -> None:
         logger.info(logger.info(f'Пользователь {message.chat.first_name} ввёл вес, '
                                 f'Данные пользователя {message.chat.first_name}, занесены в базу'))
         bot.send_message(message.from_user.id,
-                         text="Что бы начать считать калории, нажмите <Добавить калории> внизу.",
+                         text="Что бы начать считать калории, нажмите <Добавить продукт> внизу.",
                          reply_markup=reply_bottons.ate_now())
+        print('total', total_products)
         add_user_calories(bot, total_products)
 
 
@@ -82,5 +83,5 @@ def survey_result() -> str:
                                                 age=survey_parameters['user_age'])
     else:
         return formulas.calorie_calculation_women(weight=survey_parameters['user_weight'],
-                                                height=survey_parameters['user_height'],
-                                                age=survey_parameters['user_age'])
+                                                  height=survey_parameters['user_height'],
+                                                  age=survey_parameters['user_age'])

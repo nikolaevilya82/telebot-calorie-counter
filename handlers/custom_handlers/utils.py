@@ -4,8 +4,7 @@ from database.common.models import User, db
 from states.user_information import UserInfoState
 from states.user_information import UserInfoState
 from keyboards.inline import inline_buttons
-from calculation.user_counter import product_search, add_calorie
-
+from calculation.user_counter_now import product_search, add_calorie
 
 
 def add_user_calories(bot, products):
@@ -20,7 +19,7 @@ def add_user_calories(bot, products):
 
     @bot.message_handler(state=UserInfoState.product)
     def get_product_weight(message):
-        product_parameters["product_now"] = message.text
+        product_parameters["product_now"] = message.text.lower()
         bot.send_message(chat_id=message.chat.id,
                          text="Введите вес продуктa или блюда в граммах.")
         bot.set_state(message.from_user.id, UserInfoState.product_weight)

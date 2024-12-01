@@ -19,7 +19,9 @@ def create_pattern(word: str) -> str:
 def product_search(product_name: str, product_weight: float, product_dict: dict) -> str:
     """Поиск среди всех ключей с использованием фильтрации по регулярному выражению
     и вычисление количества калорий, соответствующих весу продукта."""
+    print('product dict', product_dict)
     calorie_in_100 = product_dict.get(product_name)
+    print('calorie_in_100', calorie_in_100)
 
     if calorie_in_100 is None:
         pattern = create_pattern(product_name)
@@ -62,6 +64,6 @@ def add_calorie(data_base: db, user, calorie, user_tg_id):
 if __name__ == "__main__":
     create_pattern("udhgfu")
     products = {'abc': '234', 'dfg': '567'}
-    eat = product_search('abp', 300, products)
+    eat = product_search('abg', 300, products)
     print(eat)
 

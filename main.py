@@ -8,10 +8,10 @@ from telebot.custom_filters import StateFilter
 from handlers.default_handlers import start
 from database.common import models
 from config_data.logger_setup import setup_logging
-from utils.global_product import start_parsing
+from api.parser import get_all_product_data
 
 
-start_parsing()
+get_all_product_data("https://supercalorizator.ru")
 
 
 def create_first_table(date_base, user):
